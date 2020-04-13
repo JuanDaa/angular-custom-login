@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
-import { UsuarioModel } from '../../models/usuario.model';
+import { UserModel } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 
 import Swal from 'sweetalert2';
@@ -14,8 +14,8 @@ import Swal from 'sweetalert2';
 })
 export class LoginComponent implements OnInit {
 
-  usuario: UsuarioModel = new UsuarioModel();
-  recordarme = false;
+  user: UserModel = new UserModel();
+  rememberMe = false;
 
   constructor( private auth: AuthService,
                private router: Router ) { }
@@ -23,8 +23,8 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
 
     if ( localStorage.getItem('email') ) {
-      this.usuario.email = localStorage.getItem('email');
-      this.recordarme = true;
+      this.user.email = localStorage.getItem('email');
+      this.rememberMe = true;
     }
 
   }
@@ -42,14 +42,14 @@ export class LoginComponent implements OnInit {
     Swal.showLoading();
 
 
-    this.auth.login( this.usuario )
+    this.auth.login( this.user )
       .subscribe( resp => {
 
         console.log(resp);
         Swal.close();
 
-        if ( this.recordarme ) {
-          localStorage.setItem('email', this.usuario.email);
+        if ( this.rememberMe ) {
+          localStorage.setItem('email', this.user.email);
         }
 
 

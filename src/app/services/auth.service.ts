@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { UsuarioModel } from '../models/usuario.model';
+import { UserModel } from '../models/user.model';
 
 import { map } from 'rxjs/operators';
 
@@ -9,12 +9,12 @@ import { map } from 'rxjs/operators';
 })
 export class AuthService {
 
-  private url = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty';
-  private apikey = 'AIzaSyCr--fzsw8mVaADP3mPVyy72vsQKvJ6cYY';
+  private  API_URL = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty';
+  private  API_KEY = 'AIzaSyBKb36Y_y2QfjAJG-VX5xQTAKuAj7hZZ4s';
 
   userToken: string;
 
-  // Crear nuevo usuario
+  // Create new user
   // https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=[API_KEY]
 
 
@@ -23,46 +23,46 @@ export class AuthService {
 
 
   constructor( private http: HttpClient ) {
-    this.leerToken();
+    this.readToken();
   }
 
 
-  logout() {
+  static logout() {
     localStorage.removeItem('token');
   }
 
-  login( usuario: UsuarioModel ) {
+  login( user: UserModel ) {
 
     const authData = {
-      ...usuario,
+      ...user,
       returnSecureToken: true
     };
 
     return this.http.post(
-      `${ this.url }/verifyPassword?key=${ this.apikey }`,
+      `${ this.API_URL }/verifyPassword?key=${ this.API_KEY }`,
       authData
     ).pipe(
       map( resp => {
-        this.guardarToken( resp['idToken'] );
+        this.saveToken( resp['idToken'] );
         return resp;
       })
     );
 
   }
 
-  nuevoUsuario( usuario: UsuarioModel ) {
+  newUser(user: UserModel ) {
 
     const authData = {
-      ...usuario,
+      ...user,
       returnSecureToken: true
     };
 
     return this.http.post(
-      `${ this.url }/signupNewUser?key=${ this.apikey }`,
+      `${ this.API_URL }/signupNewUser?key=${ this.API_KEY }`,
       authData
     ).pipe(
       map( resp => {
-        this.guardarToken( resp['idToken'] );
+        this.saveToken( resp['idToken'] );
         return resp;
       })
     );
@@ -70,20 +70,20 @@ export class AuthService {
   }
 
 
-  private guardarToken( idToken: string ) {
+  private saveToken( idToken: string ) {
 
     this.userToken = idToken;
     localStorage.setItem('token', idToken);
 
-    let hoy = new Date();
-    hoy.setSeconds( 3600 );
+    let toDay = new Date();
+    toDay.setSeconds( 3600 );
 
-    localStorage.setItem('expira', hoy.getTime().toString() );
+    localStorage.setItem('expira', toDay.getTime().toString() );
 
 
   }
 
-  leerToken() {
+  readToken() {
 
     if ( localStorage.getItem('token') ) {
       this.userToken = localStorage.getItem('token');
@@ -96,21 +96,16 @@ export class AuthService {
   }
 
 
-  estaAutenticado(): boolean {
+  isAuthenticated(): boolean {
 
     if ( this.userToken.length < 2 ) {
       return false;
     }
 
-    const expira = Number(localStorage.getItem('expira'));
-    const expiraDate = new Date();
-    expiraDate.setTime(expira);
-
-    if ( expiraDate > new Date() ) {
-      return true;
-    } else {
-      return false;
-    }
+    const expiration = Number(localStorage.getItem('expira'));
+    const expirationDate = new Date();
+    expirationDate.setTime(expiration);
+    return expirationDate > new Date();
 
 
   }

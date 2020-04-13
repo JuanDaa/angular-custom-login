@@ -1,10 +1,10 @@
 
 
-export class UsuarioModel {
+export class UserModel {
 
     email: string;
     password: string;
-    nombre: string;
+    name: string;
 
 }
 

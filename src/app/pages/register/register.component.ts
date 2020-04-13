@@ -2,26 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgForm } from '@angular/forms';
 
-import { UsuarioModel } from '../../models/usuario.model';
+import { UserModel } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 
 import Swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-registro',
-  templateUrl: './registro.component.html',
-  styleUrls: ['./registro.component.css']
+  selector: 'app-register',
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.css']
 })
-export class RegistroComponent implements OnInit {
+export class RegisterComponent implements OnInit {
 
-  usuario: UsuarioModel;
-  recordarme = false;
+  user: UserModel;
+  remember = false;
 
   constructor( private auth: AuthService,
                private router: Router ) { }
 
   ngOnInit() {
-    this.usuario = new UsuarioModel();
+    this.user = new UserModel();
   }
 
   onSubmit( form: NgForm ) {
@@ -35,14 +35,14 @@ export class RegistroComponent implements OnInit {
     });
     Swal.showLoading();
 
-    this.auth.nuevoUsuario( this.usuario )
+    this.auth.newUser( this.user )
       .subscribe( resp => {
 
         console.log(resp);
         Swal.close();
 
-        if ( this.recordarme ) {
-          localStorage.setItem('email', this.usuario.email);
+        if ( this.remember ) {
+          localStorage.setItem('email', this.user.email);
         }
 
         this.router.navigateByUrl('/home');
